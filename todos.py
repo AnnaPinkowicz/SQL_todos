@@ -22,30 +22,34 @@ def create_todo(todo, description, done):
       curr.execute("INSERT INTO todos (todo, description, done) VALUES (?,?,?)", (todo, description, done))
       conn.commit()
 
-def get_todo(todo):
+def get_todo(todo_name):
     curr = conn.cursor()
-    curr.execute("SELECT todo FROM todos WHERE todo = todo")
+    curr.execute("SELECT * FROM todos WHERE todo = ?", (todo_name,))
+    wynik= curr.fetchall()
+    pprint.pprint(wynik)
     conn.commit()
-    return todo
+    return wynik    
 
-def delete_todo(todo):
+def delete_todo(todo_name):
     curr = conn.cursor()
-    curr.execute("DELETE FROM todos WHERE todo = todo")
+    curr.execute("DELETE FROM todos WHERE todo = ?",(todo_name,))
     conn.commit()
     print("Deleted")
 
 def update_todo(todo,description,done):
     curr = conn.cursor()
-    curr.execute("UPDATE todos SET todo = todo, description= description, done = done WHERE todo = todo")
+    curr.execute("UPDATE todos SET todo = ?, description= ?, done = ? WHERE todo = ?",(todo, description, done, todo))
     conn.commit()
   
 if __name__ == '__main__':
       conn = sqlite3.connect("todos.db")
       create_tables(conn)
-      show_all(conn)
       create_todo("python", "nauka sqlite","True")
-      update_todo("python","flask","False")
       create_todo("sql","repeating","False")
+      show_all(conn)
+      get_todo("python")
+      show_all(conn)
+      update_todo("python","flask","False")
       show_all(conn)
       delete_todo("python")
       show_all(conn)
